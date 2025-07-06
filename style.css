@@ -1,0 +1,581 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #0a0a0a;
+    font-family: 'Orbitron', sans-serif;
+    color: #00f7ff;
+    overflow-y: auto;
+}
+
+/* Splash Screen Styles */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 1s ease, visibility 1s ease;
+}
+
+.splash-header {
+    font-size: 48px;
+    font-weight: bold;
+    color: #00f7ff;
+    text-shadow: 0 0 15px #00f7ff, 0 0 25px #00f7ff;
+    margin-bottom: 20px;
+    letter-spacing: 10px;
+}
+
+.splash-logo {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: rotate 4s linear infinite;
+    box-shadow: 0 0 15px #00f7ff;
+}
+
+.logo-ring::before {
+    content: '';
+    position: absolute;
+    top: -5px; right: -5px; bottom: -5px; left: -5px;
+    border-radius: 50%;
+    background: conic-gradient(from 90deg at 50% 50%, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+    animation: rotate 4s linear infinite;
+    filter: blur(10px);
+}
+
+.mic-icon-3d {
+    position: absolute;
+    transform-style: preserve-3d;
+    animation: float 3s ease-in-out infinite;
+}
+
+.mic-body {
+    position: absolute;
+    width: 20px;
+    height: 60px;
+    background: #ccc;
+    border-radius: 5px;
+    transform: translate(-50%, -50%) rotateX(90deg) translateZ(-30px);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.mic-head {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle at 65% 35%, #fff, #aaa);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotateX(90deg) translateZ(10px);
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+}
+
+.logo-text {
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #333, #555, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.2);
+    opacity: 0; /* Hide the FVC text, as the mic is now the logo */
+}
+
+.splash-tagline {
+    font-size: 22px;
+    margin-top: 20px;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+}
+
+.loading-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.splash-loading {
+    font-size: 18px;
+    color: #00f7ff;
+    opacity: 0.8;
+}
+
+.loading-line {
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00f7ff, transparent);
+    animation: loading-line-animation 2s infinite;
+}
+
+@keyframes loading-line-animation {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Main Calculator Styles */
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.calculator-container {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+    border: 2px solid rgba(0, 255, 255, 0.8);
+    padding: 25px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 120px; /* Increased space for fixed nav to prevent overlap */
+}
+
+.screen-title {
+    text-align: center;
+    color: #00f7ff;
+    text-shadow: 0 0 10px #00f7ff;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.calculator-screen {
+    display: none;
+}
+
+.calculator-screen.active {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.display input {
+    width: calc(100% - 20px);
+    height: 100px; /* Increased height */
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #00ff00; /* Green text */
+    text-shadow: 0 0 10px #00ff00; /* Green glow */
+    font-size: 60px; /* Increased font size */
+    text-align: right;
+    padding: 0 10px;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 25px rgba(0, 150, 200, 0.7), 0 0 15px rgba(0, 150, 200, 0.5), 0 0 0 5px rgba(0, 70, 100, 0.5); /* Darker sky blue neon border glow */
+    border-radius: 15px; /* Slightly more rounded */
+    margin-bottom: 10px;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    text-overflow: clip; /* Prevent ellipsis */
+}
+
+#mic-icon {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 50%, rgba(0, 255, 255, 0) 100%);
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 3px solid #00f7ff;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 255, 0.8),
+        0 0 40px rgba(0, 255, 255, 0.6),
+        0 0 60px rgba(0, 255, 255, 0.4),
+        inset 0 0 10px rgba(0, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#mic-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 0%, rgba(0, 255, 255, 0.1) 50%, transparent 100%);
+    transform: rotate(45deg);
+    animation: shine 2s infinite linear;
+}
+
+@keyframes shine {
+    0% {
+        transform: rotate(45deg) translate(-100%, -100%);
+    }
+    100% {
+        transform: rotate(45deg) translate(100%, 100%);
+    }
+}
+
+#mic-icon svg {
+    width: 35px;
+    height: 35px;
+    fill: #00f7ff;
+}
+
+#mic-icon.listening {
+    border-color: #009900; /* Dark Green border */
+    animation: glowing-mic 1.5s infinite;
+}
+
+#mic-icon.listening svg {
+    fill: #009900; /* Dark Green icon */
+}
+
+@keyframes glowing-mic {
+    0% {
+        box-shadow: 
+            0 0 20px rgba(0, 153, 0, 0.8),
+            0 0 40px rgba(0, 153, 0, 0.6),
+            0 0 60px rgba(0, 153, 0, 0.4),
+            inset 0 0 10px rgba(0, 153, 0, 0.5);
+    }
+    50% {
+        box-shadow: 
+            0 0 30px rgba(0, 153, 0, 1),
+            0 0 60px rgba(0, 153, 0, 0.8),
+            0 0 90px rgba(0, 153, 0, 0.6),
+            inset 0 0 15px rgba(0, 153, 0, 0.7);
+    }
+    100% {
+        box-shadow: 
+            0 0 20px rgba(0, 153, 0, 0.8),
+            0 0 40px rgba(0, 153, 0, 0.6),
+            0 0 60px rgba(0, 153, 0, 0.4),
+            inset 0 0 10px rgba(0, 153, 0, 0.5);
+    }
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.creator-credit-styled {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px; /* Space below the buttons */
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6); /* Dark white color */
+    letter-spacing: 2px; /* Adds space between letters */
+}
+
+.creator-credit-styled::before,
+.creator-credit-styled::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4); /* Line color */
+}
+
+.creator-credit-styled::before {
+    margin-right: .5em;
+}
+
+.creator-credit-styled::after {
+    margin-left: .5em;
+}
+
+button {
+    position: relative; /* Needed for ripple effect */
+    overflow: hidden;   /* Needed for ripple effect */
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 10px;
+    color: #00f7ff;
+    font-size: 28px;
+    padding: 20px;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.1s;
+    text-shadow: 0 0 5px #00f7ff;
+}
+
+button:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Specific button text colors */
+button[onclick*="clearDisplay"] {
+    color: red;
+    text-shadow: 0 0 5px red;
+}
+
+button[onclick*="deleteLast"] {
+    color: orange;
+    text-shadow: 0 0 5px orange;
+}
+
+.operator {
+    color: #ff00ff;
+    text-shadow: 0 0 5px #ff00ff;
+}
+
+.equals {
+    background: #006400; /* Dark green background */
+    color: #00ff00; /* Green text */
+    text-shadow: 0 0 5px #00ff00; /* Green glow */
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+}
+
+.equals:hover {
+    background: #008000; /* Slightly lighter green on hover */
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.9);
+}
+
+/* Form Group Styles for other calculators */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #00f7ff;
+}
+
+.form-group input, .form-group select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+}
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
+
+.calculate-btn, .calculate-btn-green {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.calculate-btn {
+    background: linear-gradient(145deg, #005c29, #00b352);
+    box-shadow: 0 0 10px #00b352;
+}
+
+.calculate-btn:hover {
+    box-shadow: 0 0 20px #00b352;
+}
+
+.calculate-btn-green {
+    background: linear-gradient(145deg, #005c29, #00b352);
+    box-shadow: 0 0 10px #00b352;
+}
+
+.calculate-btn-green:hover {
+    box-shadow: 0 0 20px #00b352;
+}
+
+#emi-result, #fuel-cost-result, #split-bill-result, #expense-total {
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(145deg, #011a29, #00486d);
+    border-radius: 5px;
+    text-align: center;
+    font-size: 20px; /* Slightly larger font */
+    font-family: 'Orbitron', sans-serif; /* Ensure futuristic font */
+    color: #009900; /* Darker green color */
+    text-shadow: 0 0 12px #009900; /* Darker green glow */
+    box-shadow: 0 0 15px rgba(0, 153, 0, 0.7); /* Enhanced box shadow */
+    border: 1px solid rgba(0, 153, 0, 0.8);
+}
+
+#emi-result p, #fuel-cost-result p, #split-bill-result p, #expense-total p {
+    margin: 5px 0; /* Spacing for multiple lines */
+}
+
+/* Expenses Tracker */
+#expense-list {
+    list-style: none;
+    padding: 0;
+}
+
+#expense-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+#expense-list li input[type="checkbox"] {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    accent-color: #00f7ff; /* Checkbox color */
+}
+
+#expense-list li span.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+#expense-list li button {
+    background: #ff00ff;
+    color: #0a0a0a;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    box-shadow: 0 -5px 15px rgba(0, 255, 255, 0.3);
+    border-top: 1px solid rgba(0, 255, 255, 0.5);
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px;
+}
+
+.nav-item svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-item.active svg {
+    fill: #00f7ff;
+    filter: drop-shadow(0 0 5px #00f7ff);
+}
+
+.nav-item.active span {
+    color: #00f7ff;
+    text-shadow: 0 0 3px #00f7ff;
+}
+
+.nav-item.active {
+    transform: scale(1.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 400px) {
+    .calculator-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .display input {
+        font-size: 48px;
+    }
+
+    button {
+        font-size: 24px;
+        padding: 15px;
+    }
+
+    .nav-item svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .nav-item span {
+        font-size: 12px;
+    }
+}
